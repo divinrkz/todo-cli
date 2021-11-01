@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+use std::io::Read;
+use std::str::FromStr;
 
 fn main() {
 
@@ -29,6 +31,53 @@ struct Todo {
 }
 
 impl Todo {
+    fn new() -> Result<Todo, std::io::Error> {
+  
+        let mut f = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create(true)
+                    .read(true)
+                    .open("db.txt")?;
+
+        let mut content = String::new();
+
+        f.read_to_string(&mut content)?;
+
+        let map: HashMap<String, bool> = content
+                .lines() 
+                .map(|line| line.splitn(2, '\t').collect::<Vec<&str>>())
+                .map(|v| (v[0], v[1]))
+                .map(|(k, v)| (String::from(k), bool::from_str(v).unwrap()))
+                .collect();
+
+        Ok(Todo { map })
+
+    }
+
+    fn new1() -> Result<Todo, std::io::Error> {
+        let mut f  = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create(true)
+                    .read(true)
+                    .open("db.txt")?;
+
+        let mut content = String::new();
+        
+        f.read_to_string(&mut content)?;
+
+        let mut map = HashMap::new();
+        
+        for entries in content.lines() {
+            // split and bind values
+            let mut values = entries.split('\t');
+            let key = values.next().expect("No Key");
+            let val = values.next().expect("No Value");
+        
+            map.insert(String::from(key), bool::from_str(val).unwrap());
+        }
+        Ok(Todo { map}) 
+    }
+
     fn insert(&mut self, key: String) {
         self.map.insert(key, true);
     }
@@ -42,5 +91,12 @@ impl Todo {
 
         std::fs::write("db.txt", content)
 
+    }
+
+    fn complete(&mut self, key: &String) -> Option<()> {
+        match self.map:get_mut(key) {
+            Some(v) => Some(*v = false),
+            None => None,
+        }
     }
 }
