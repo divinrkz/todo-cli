@@ -1,1 +1,7 @@
+Praise the LORD	false
+Code in Rust	true
+Code in Java	true
+Code in Ruby	true
 Code in TS	true
+Code in Python	true
+Code in JS	true
