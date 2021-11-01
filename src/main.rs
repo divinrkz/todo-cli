@@ -23,6 +23,18 @@ fn main() {
         }
     }
 
+    if action == "add" {
+        todo.insert(item);
+        match todo.save() {
+            Ok(_) => println!("Todo Saved !"),
+            Err(why) => println!("An error occured: {}", why)
+        }
+    } else if action == "complete" {
+        match todo.complete(&item) {
+            Ok(_) => println!("Todo saved"),
+            Err(why) => println!("An error occured: {}", why),
+        }
+    }
     // println!("{:?}, {:?}", action, item)
 }
 
@@ -100,3 +112,4 @@ impl Todo {
         }
     }
 }
+
